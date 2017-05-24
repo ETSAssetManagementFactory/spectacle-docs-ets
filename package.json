@@ -1,5 +1,5 @@
 {
-  "name": "spectacle-docs",
+  "name": "spectacle-docs-ets",
   "version": "0.8.2",
   "description": "Generate beautiful static API documentation from OpenAPI/Swagger 2.0 specifications",
   "preferGlobal": true,
