@@ -19,7 +19,7 @@
 	width: 100%;
 }
 #spectacle article .operation .operation-tags{
-	right: 0;
+	right: 0 !important;
 }
 #spectacle article{
 	display: block;
@@ -57,4 +57,11 @@ a.label:hover,
 a.label:focus{
 	background-color: #330066;
 	color: #fff;
+}
+code{
+	background-color: rgb(240,240,240);
+	border: 0;
+	border-radius: 0;
+	line-height: 2;
+	padding: 0.25rem 0.5rem;
 }
