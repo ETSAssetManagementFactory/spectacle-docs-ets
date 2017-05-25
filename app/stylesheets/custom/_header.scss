@@ -10,8 +10,10 @@
 
 // HD Query logo
 #introduction::before{
-	background: url(../images/logo_hdquery.jpg) no-repeat center;
+	background: url(../images/logo_hdquery.svg) center no-repeat;
+	background-size: contain;
 	content: '';
 	display: block;
-	height: 112px;
+	height: 55px;
+	margin-bottom: 1.5rem;
 }
