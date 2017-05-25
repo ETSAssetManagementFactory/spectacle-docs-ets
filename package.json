@@ -10,7 +10,8 @@
     "build": "spectacle -l test/fixtures/cheese.png test/fixtures/cheese.json",
     "test": "node bin/spectacle -l test/fixtures/cheese.png test/fixtures/cheese.json",
     "develop": "spectacle -d",
-    "start": "spectacle -s"
+    "start": "spectacle -s",
+    "ets": "spectacle -l ./logo.png ./spec.yaml -t ./web/"
   },
   "repository": {
     "type": "git",
