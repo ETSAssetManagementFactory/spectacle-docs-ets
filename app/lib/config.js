@@ -133,6 +133,14 @@ module.exports = function(grunt, options, spec) {
 
       // Copy files to the target directory
       copy: {
+          images: {
+            expand:     true,
+            cwd:        options.appDir + '/images/',
+            src:        ['**/*'],
+            dest:       options.targetDir + '/images/',
+            filter:     'isFile',
+            flatten:    true
+          },
           logo: {
               src: options.logoFile,
               dest: options.targetDir + '/images/' + path.basename(options.logoFile || '')
