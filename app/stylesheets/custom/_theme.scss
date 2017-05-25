@@ -1,0 +1,60 @@
+// Theme | El resto de estilo
+#spectacle,
+#spectacle h1,
+#spectacle h2,
+#spectacle h3,
+#spectacle h4,
+#spectacle h5,
+#spectacle h6{
+	font-family: 'Cabin', sans-serif;
+}
+#spectacle .drawer-layout .drawer{
+	box-shadow: none;
+}
+#spectacle article .doc-examples,
+#spectacle #docs .example-box {
+	background-color: transparent;
+}
+#spectacle .large-6, #spectacle .doc-content, #spectacle article h1.doc-title, #spectacle article > h1, #spectacle article > h2, #spectacle article .panel > h2, #spectacle article .panel > h3, #spectacle article .doc-copy, #spectacle article .doc-examples{
+	width: 100%;
+}
+#spectacle article .operation .operation-tags{
+	right: 0;
+}
+#spectacle article{
+	display: block;
+	max-width: 50rem;
+	margin: 0 auto;
+}
+#spectacle article h1.swagger-summary-tag:first-of-type{
+	margin-top: 0;
+}
+#spectacle article h1{
+	background: transparent;
+	border: 0;
+	border-bottom: 1px solid #330066;
+	color: #330066;
+	font-size: 2.25rem;
+	padding-bottom: 0.25rem !important;
+	display: block;
+	margin-top: 7rem;
+	margin-bottom: 3rem;
+}
+#spectacle article .prop-row{
+	border: 0;
+}
+#spectacle .json-property-required:before{
+	border-radius: 0;
+}
+.label{
+	background-color: #6B4487;
+}
+a.label{
+	border: 0;
+	cursor: pointer;
+}
+a.label:hover,
+a.label:focus{
+	background-color: #330066;
+	color: #fff;
+}

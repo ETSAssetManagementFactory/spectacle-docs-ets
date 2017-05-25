@@ -1,0 +1,17 @@
+// Cabecera
+#introduction{
+	text-align: center;
+	margin-top: 4rem;
+}
+#spectacle article h1.doc-title{
+	font-size: 3rem;
+	padding-top: 0.5rem;
+}
+
+// HD Query logo
+#introduction::before{
+	background: url(../images/logo_hdquery.jpg) no-repeat center;
+	content: '';
+	display: block;
+	height: 112px;
+}

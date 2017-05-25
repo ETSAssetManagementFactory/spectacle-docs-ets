@@ -1,0 +1,23 @@
+// Scrollbar | Bar
+::-webkit-scrollbar {
+	width: 10px;
+	background-color: rgb(245,245,245);
+}
+#sidebar::-webkit-scrollbar {
+	width: 6px;
+}
+// Scrollbar | Track
+::-webkit-scrollbar-track {
+	-webkit-border-radius: 20px;
+	border-radius: 20px;
+}
+// Scrollbar | Handle
+::-webkit-scrollbar-thumb {
+	-webkit-border-radius: 20px;
+	border-radius: 20px;
+	background: #02B5C4; 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #02B5C4; 
+	opacity: 0.8;
+}

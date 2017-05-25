@@ -1,81 +1,11 @@
+// Partial styles
+@import 'custom/hljs-vue';
+@import 'custom/scrollbar';
+@import 'custom/links';
+@import 'custom/colors';
+@import 'custom/header';
+@import 'custom/sidebar';
+@import 'custom/hamburger';
 
-#spectacle article .doc-examples,
-#spectacle #docs .example-box {
-	background-color: transparent;
-}
-#spectacle .large-6, #spectacle .doc-content, #spectacle article h1.doc-title, #spectacle article > h1, #spectacle article > h2, #spectacle article .panel > h2, #spectacle article .panel > h3, #spectacle article .doc-copy, #spectacle article .doc-examples{
-	width: 100%;
-}
-#spectacle article .operation .operation-tags{
-	right: 0;
-}
-#spectacle article{
-	display: block;
-	max-width: 50rem;
-	margin: 0 auto;
-}
-#spectacle article h1{
-	border: 1px solid #e8e8e8;
-}
-
-/* Highlight JS */
-#spectacle .hljs pre{
-	box-shadow: none;
-	border: none;
-	color: #525252;
-}
-
-#spectacle .hljs {
-	background: #f8f8f8; }
-
-#spectacle .hljs,
-#spectacle .hljs-tag,
-#spectacle .hljs-subst {
-	color: #2973b7; }
-#spectacle .hljs-strong,
-#spectacle .hljs-emphasis {
-	color: #a8a8a2; }
-
-#spectacle .hljs-bullet,
-#spectacle .hljs-quote,
-#spectacle .hljs-number,
-#spectacle .hljs-regexp,
-#spectacle .hljs-literal,
-#spectacle .hljs-link {
-	color: #ae81ff; }
-
-#spectacle .hljs-code,
-#spectacle .hljs-title,
-#spectacle .hljs-section,
-#spectacle .hljs-selector-class {
-	color: #fff; }
-
-#spectacle .hljs-keyword,
-#spectacle .hljs-selector-tag,
-#spectacle .hljs-name,
-#spectacle .hljs-attr {
-	color: #42b983; }
-
-#spectacle .hljs-symbol,
-#spectacle .hljs-attribute {
-	color: #42b983; }
-#spectacle .hljs-params,
-#spectacle .hljs-class .hljs-title {
-	color: #f8f8f2; }
-
-#spectacle .hljs-string,
-#spectacle .hljs-type,
-#spectacle .hljs-built_in,
-#spectacle .hljs-builtin-name,
-#spectacle .hljs-selector-id,
-#spectacle .hljs-selector-attr,
-#spectacle .hljs-selector-pseudo,
-#spectacle .hljs-addition,
-#spectacle .hljs-variable,
-#spectacle .hljs-template-variable {
-	color: #e96900; }
-
-#spectacle .hljs-comment,
-#spectacle .hljs-deletion,
-#spectacle .hljs-meta {
-	color: #b3b3b3; }
+// The rest
+@import 'custom/theme';

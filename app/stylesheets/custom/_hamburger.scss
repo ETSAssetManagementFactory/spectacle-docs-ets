@@ -1,0 +1,14 @@
+// Hamburger menu
+#spectacle .drawer-layout .floating-menu-icon{
+	background-color: #6B4487;
+	transition: background-color ease-in-out .15s;
+}
+#spectacle .drawer-layout .floating-menu-icon:hover,
+#spectacle .drawer-layout .floating-menu-icon:focus{
+	background-color: #330066;
+}
+#spectacle .drawer-layout .floating-menu-icon .hamburger:hover::after,
+#spectacle .drawer-layout .floating-menu-icon .hamburger:focus::after{
+	background: #fff;
+	box-shadow: 0 7px 0 #fff, 0 14px 0 #fff;
+}
