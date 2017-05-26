@@ -158,7 +158,6 @@ module.exports = function (options) {
             grunt.task.run('javascripts');
         }
         grunt.task.run('copy:images');
-        grunt.task.run('copy:package');
         if (opts.logoFile) {
             grunt.task.run('copy:logo');
         }
