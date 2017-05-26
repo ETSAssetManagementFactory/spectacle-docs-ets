@@ -143,7 +143,7 @@ module.exports = function(grunt, options, spec) {
           },
           package: {
             src:  options.appDir + '/package.json',
-            dest: options.targetDir + '/package.json',
+            dest: options.targetDir + '../package.json',
           },
           logo: {
               src: options.logoFile,
