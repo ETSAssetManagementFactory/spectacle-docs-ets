@@ -89,6 +89,14 @@ Most options are self explanatory, but the following options warrant some furthe
 
 * **--target-dir** `-t`: This option specifies where the generated documentation HTML files will be output.
 
+## ETS custom script
+
+Default ETS task, equal to `spectacle -l ./logo.png ./spec.yaml -t ./web/`
+
+```bash
+npm run ets
+```
+
 ## Custom Builds
 
 The best option for building your own custom functionality into Spectacle is to [fork Spectacle on GitHub](https://help.github.com/articles/fork-a-repo/), and make your own modifications in source. This way you can keep up to date by merging changes from the `master` branch, and your can also contribute your updates back to `master` by creating a [Pull Request](https://help.github.com/articles/creating-a-pull-request/) if you think they improve Spectacle somehow.
