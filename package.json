@@ -1,7 +1,7 @@
 {
   "name": "spectacle-docs-ets",
   "version": "0.8.12",
-  "description": "Generate beautiful static API documentation from OpenAPI/Swagger 2.0 specifications",
+  "description": "Generate beautiful static API documentation from OpenAPI/Swagger 2.0 specifications (theme by ETS)",
   "preferGlobal": true,
   "bin": {
     "spectacle": "bin/spectacle.js"
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sourcey/spectacle.git"
+    "url": "git+https://github.com/ETSAssetManagementFactory/spectacle-docs-ets.git"
   },
   "keywords": [
     "openapi",
