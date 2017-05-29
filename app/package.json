@@ -1,5 +1,0 @@
-{
-  "scripts": {
-    "ets": "spectacle -l ./logo.png ./spec.yaml -t ./web/"
-  }
-}
