@@ -1,4 +1,4 @@
-# Spectacle
+# Spectacle (themed by ETS)
 
 > The gentleman at REST
 
