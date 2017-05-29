@@ -2,20 +2,20 @@
 a,
 .json-schema-ref{
 	border-bottom: 1px solid rgb(235,235,235);
-	color: #6B4487;
+	color: $color-ets-purple-light;
 	transition: all ease-in-out .2s;
 }
 a:hover,
 a:focus,
 .json-schema-ref:hover,
 .json-schema-ref:focus{
-	color: #330066;
+	color: $color-ets-purple;
 }
 a:hover,
 a:focus{
-	border-bottom-color: #6B4487;
+	border-bottom-color: $color-ets-blue;
 }
-.json-schema-ref:hover,
-.json-schema-ref:focus{
-	border-bottom-color: #02B5C4;
+a.powered-by:hover,
+a.powered-by:focus{
+	border-bottom-color: $color-ets-purple-light;
 }

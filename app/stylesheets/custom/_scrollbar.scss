@@ -15,9 +15,9 @@
 ::-webkit-scrollbar-thumb {
 	-webkit-border-radius: 20px;
 	border-radius: 20px;
-	background: #02B5C4; 
+	background: $color-ets-blue; 
 }
 ::-webkit-scrollbar-thumb:window-inactive {
-	background: #02B5C4; 
+	background: $color-ets-blue; 
 	opacity: 0.8;
 }

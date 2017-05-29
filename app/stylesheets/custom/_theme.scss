@@ -32,8 +32,8 @@
 #spectacle article h1{
 	background: transparent;
 	border: 0;
-	border-bottom: 1px solid #330066;
-	color: #330066;
+	border-bottom: 1px solid $color-ets-purple;
+	color: $color-ets-purple;
 	font-size: 2.25rem;
 	padding-bottom: 0.25rem !important;
 	display: block;
@@ -47,7 +47,7 @@
 	border-radius: 0;
 }
 .label{
-	background-color: #6B4487;
+	background-color: $color-ets-purple-light;
 }
 a.label{
 	border: 0;
@@ -55,7 +55,7 @@ a.label{
 }
 a.label:hover,
 a.label:focus{
-	background-color: #330066;
+	background-color: $color-ets-purple;
 	color: #fff;
 }
 code{

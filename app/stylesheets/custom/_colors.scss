@@ -5,6 +5,8 @@
 #spectacle .swagger-responses:before,
 #spectacle .json-schema-properties:before,
 #spectacle .json-schema-description:before,
+#spectacle .swagger-request-body:before,
+#spectacle .swagger-request-body .json-schema-properties:before,
 #spectacle #sidebar a.active{
-	color: #02B5C4;
+	color: $color-ets-blue;
 }
