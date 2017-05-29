@@ -49,4 +49,22 @@ $(function() {
     // Drawer close buttons
     $drawerLayout.find('[data-drawer-close]').click(closeDrawer);
   }
+
+  // Accordion codebox
+  var height = 400;
+  $('.hljs').each(function(){ // do this for each matched item
+    if ($(this).outerHeight() > height) { // search for <p> in context of current element
+      $(this).addClass('accordion close');
+            console.log('adding class')
+      $(this).unbind("click");
+      $(this).click(function(){
+        var sel = getSelection().toString();
+          if(!sel){
+            $(this).toggleClass('close');
+            console.log('click')
+          }
+      })
+    }
+  });
+  
 });

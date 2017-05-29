@@ -1,0 +1,58 @@
+// Default codebox styles
+code {
+  background-color: #f0f0f0;
+  border: 0;
+  border-radius: 0;
+  line-height: 2;
+  padding: 0.25rem 0.5rem;
+}
+
+// Accordion
+.accordion{
+  overflow: hidden !important;
+  position: relative;
+  transition: all ease-in-out .2s;
+}
+.accordion:hover{
+  cursor: pointer;
+  background-color: #eee !important;
+}
+.accordion.close{
+  max-height: 400px;
+}
+
+// Arrow
+.accordion.close::before{
+  border-left: 2px solid rgb(200,200,200);
+  border-bottom: 2px solid rgb(200,200,200);
+  bottom: 2em;
+  content: '';
+  height: 24px;
+  left: 50%;
+  margin-left: -12px;
+  position: absolute;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  transition: all ease-in-out .2s;
+  opacity: .5;
+  width: 24px;
+  z-index: 10;
+}
+.accordion.close:hover::before{
+  opacity: 1;
+  bottom: 1.5em;
+}
+
+// Gradient
+.accordion.close::after{
+  bottom: 0;
+  background: linear-gradient(transparent, #f8f8f8) !important;
+  content: '';
+  height: 100%;
+  position: absolute;
+  transition: all ease-in-out .2s;
+  width: 100%;
+}
+.accordion.close:hover::after{
+  opacity: 0;
+}
