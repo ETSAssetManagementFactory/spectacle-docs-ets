@@ -141,10 +141,6 @@ module.exports = function(grunt, options, spec) {
             filter:     'isFile',
             flatten:    true
           },
-          package: {
-            src:  options.appDir + '/package.json',
-            dest: options.targetDir + '../package.json',
-          },
           logo: {
               src: options.logoFile,
               dest: options.targetDir + '/images/' + path.basename(options.logoFile || '')
