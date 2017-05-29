@@ -7,4 +7,4 @@ WORKDIR /opt
 RUN apk update \
  && apk add git vim curl wget \
  && rm -rf /var/cache/apk/* \
- && npm install -g spectacle-docs
+ && npm install -g spectacle-docs-ets

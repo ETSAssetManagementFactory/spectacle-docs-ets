@@ -9,7 +9,7 @@
   "scripts": {
     "build": "spectacle -l test/fixtures/cheese.png test/fixtures/cheese.json",
     "test": "node bin/spectacle -l test/fixtures/cheese.png test/fixtures/cheese.json",
-    "develop": "spectacle -d",
+    "develop": "node bin/spectacle -l test/fixtures/cheese.png test/fixtures/cheese.json -d",
     "start": "spectacle -s",
     "ets": "spectacle -l ./logo.png ./spec.yaml -t ./web/"
   },
