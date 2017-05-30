@@ -32,22 +32,22 @@ $(function() {
 
 		}).appendTo($codeboxLinkWrapper);
 
-		// Create print links
-		$('<a>', { 
-				class: 'codebox-link print-code hide-on-print'
-		}).text('Print').click(function(e){
+		// // Create print links
+		// $('<a>', { 
+		// 		class: 'codebox-link print-code hide-on-print'
+		// }).text('Print').click(function(e){
 
-			// Prevent click default and propagation
-			e.preventDefault()
-			e.stopPropagation()
+		// 	// Prevent click default and propagation
+		// 	e.preventDefault()
+		// 	e.stopPropagation()
 
-			// Get text
-			var texto = $codebox.text();
+		// 	// Get text
+		// 	var texto = $codebox.text();
 
-			// Copy to clipboard
-			printElem($codebox);
+		// 	// Copy to clipboard
+		// 	printElem($codebox);
 
-		}).appendTo($codeboxLinkWrapper);
+		// }).appendTo($codeboxLinkWrapper);
 
 		// Accordion
 		if ($(this).outerHeight() > height) { // search for <p> in context of current element
