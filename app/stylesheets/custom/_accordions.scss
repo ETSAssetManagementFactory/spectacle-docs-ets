@@ -46,7 +46,7 @@ code {
 // Gradient
 .accordion.close::after{
   bottom: 0;
-  background: linear-gradient(transparent, #f8f8f8) !important;
+  background: linear-gradient(transparent, #f8f8f8);
   content: '';
   height: 100%;
   position: absolute;

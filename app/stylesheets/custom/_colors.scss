@@ -7,6 +7,8 @@
 #spectacle .json-schema-description:before,
 #spectacle .swagger-request-body:before,
 #spectacle .swagger-request-body .json-schema-properties:before,
+#spectacle .swagger-request-security:before,
+#spectacle .json-schema-additionalProperties:before, #spectacle .json-schema-allOf-inherited:before, #spectacle .json-schema-array-items:before, #spectacle .json-schema-example:before,
 #spectacle #sidebar a.active{
 	color: $color-ets-blue;
 }
