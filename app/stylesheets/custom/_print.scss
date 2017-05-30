@@ -1,0 +1,61 @@
+@media print {
+
+	.hide-on-print,
+	.powered-by,
+	#introduction::before,
+	#sidebar{
+		display: none;
+	}
+
+	html{
+		font-size: 12px;
+	}
+
+	@page {
+		margin: 1.5cm 2cm;
+	}
+
+	// Titles
+	#spectacle article h1.doc-title{
+		padding-top: 0;
+		padding-top: 0;
+	}
+	#spectacle article h1{
+		margin-bottom: .25cm;
+		margin-top: .5cm;
+	}
+
+	// Rows
+	#spectacle article .doc-row{
+		margin: .25cm 0;
+	}
+
+	// Code box
+	.hljs{
+		border-radius: 0 !important;
+	}
+	pre{
+		background-color: rgb(240,240,240) !important;
+		border-radius: 0 !important;
+	}
+
+	// Accordion
+	.accordion{
+		overflow: hidden !important;
+		position: relative;
+		transition: all ease-in-out .2s;
+	}
+	.accordion.close{
+		max-height: inherit;
+	}
+
+	// Arrow
+	.accordion.close::before{
+		display: none;
+	}
+
+	// Gradient
+	.accordion.close::after{
+		display: none;
+	}
+}
