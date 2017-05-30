@@ -34,7 +34,7 @@ code {
 			margin-left: -12px;
 			position: absolute;
 			transition: bottom ease-in-out .2s;
-			opacity: .25;
+			opacity: .5;
 			width: 24px;
 			z-index: 10;
 		}
@@ -65,7 +65,7 @@ code {
 	bottom: 0;
 	background: linear-gradient(transparent, #f8f8f8);
 	content: '';
-	height: 100%;
+	height: 50%;
 	position: absolute;
 	transition: all ease-in-out .2s;
 	width: 100%;
