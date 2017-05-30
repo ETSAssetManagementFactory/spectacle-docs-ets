@@ -57,7 +57,6 @@ $(function() {
 				var sel = getSelection().toString();
 				if(!sel){
 					$(this).toggleClass('close open');
-					console.log('click')
 				}
 			})
 		}
