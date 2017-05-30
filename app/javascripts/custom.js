@@ -17,7 +17,7 @@ $(function() {
 
 		// Create copy to clipboard links
 		$('<a>', { 
-				class: 'codebox-link copy-to-clipboard'
+				class: 'codebox-link copy-to-clipboard hide-on-print'
 		}).text('Copy to clipboard').click(function(e){
 
 			// Prevent click default and propagation
@@ -34,7 +34,7 @@ $(function() {
 
 		// Create print links
 		$('<a>', { 
-				class: 'codebox-link print-code'
+				class: 'codebox-link print-code hide-on-print'
 		}).text('Print').click(function(e){
 
 			// Prevent click default and propagation
