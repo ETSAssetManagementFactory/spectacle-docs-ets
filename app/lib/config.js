@@ -141,6 +141,10 @@ module.exports = function(grunt, options, spec) {
             filter:     'isFile',
             flatten:    true
           },
+          favicon: {
+              src: options.faviconFile,
+              dest: options.targetDir + '/' + path.basename(options.faviconFile || '')
+          },
           logo: {
               src: options.logoFile,
               dest: options.targetDir + '/images/' + path.basename(options.logoFile || '')

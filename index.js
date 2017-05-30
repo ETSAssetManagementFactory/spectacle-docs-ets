@@ -33,6 +33,8 @@ function resolveOptions(options) {
         opts.specFile = path.resolve(__dirname, opts.specFile);
     if (opts.logoFile && opts.logoFile.indexOf('test/fixtures') === 0)
         opts.logoFile = path.resolve(__dirname, opts.logoFile);
+    if (opts.faviconFile && opts.faviconFile.indexOf('test/fixtures') === 0)
+        opts.faviconFile = path.resolve(__dirname, opts.faviconFile);
 
     return opts;
 }
@@ -158,6 +160,9 @@ module.exports = function (options) {
             grunt.task.run('javascripts');
         }
         grunt.task.run('copy:images');
+        if (opts.faviconFile) {
+            grunt.task.run('copy:favicon');
+        }
         if (opts.logoFile) {
             grunt.task.run('copy:logo');
         }
