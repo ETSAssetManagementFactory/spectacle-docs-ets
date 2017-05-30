@@ -126,7 +126,7 @@ module.exports = function(grunt, options, spec) {
                   hostname: '*',
                   port: options.port,
                   base: options.targetDir,
-                  // livereload: true
+                  livereload: true
               }
           }
       },
@@ -150,7 +150,7 @@ module.exports = function(grunt, options, spec) {
       // Watch the filesystem and regenerate docs if sources change
       watch: {
           options: {
-              // livereload: true,
+              livereload: true,
               spawn: false
           },
           js: {
