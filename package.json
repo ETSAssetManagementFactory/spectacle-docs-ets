@@ -10,8 +10,7 @@
     "build": "spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/cheese.json",
     "test": "node bin/spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/cheese.json",
     "develop": "node bin/spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/cheese.json -d",
-    "start": "spectacle -s",
-    "ets": "spectacle -l ./logo.png ./spec.yaml -t ./web/"
+    "start": "spectacle -s"
   },
   "repository": {
     "type": "git",
@@ -46,6 +45,7 @@
     "grunt-contrib-handlebars": "^0.11.0",
     "grunt-contrib-uglify": "^0.11.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-curl": "^2.2.1",
     "grunt-prettify": "^0.4.0",
     "grunt-sass": "^2.0.0",
     "handlebars": "^4.0.5",

@@ -85,6 +85,7 @@ module.exports = function (options) {
     grunt.loadNpmTasks('grunt-compile-handlebars');
     grunt.loadNpmTasks('grunt-prettify');
     grunt.loadNpmTasks('grunt-sass');
+    grunt.loadNpmTasks('grunt-curl');
 
     process.chdir(cwd);
 
@@ -161,10 +162,18 @@ module.exports = function (options) {
         }
         grunt.task.run('copy:images');
         if (opts.faviconFile) {
-            grunt.task.run('copy:favicon');
+            if(opts.faviconFile.startsWith('http')){
+                grunt.task.run('curl:favicon');
+            }else{
+                grunt.task.run('copy:favicon');
+            }
         }
         if (opts.logoFile) {
-            grunt.task.run('copy:logo');
+            if(opts.logoFile.startsWith('http')){
+                grunt.task.run('curl:logo');
+            }else{
+                grunt.task.run('copy:logo');
+            }
         }
         grunt.task.run('templates');
         if (opts.developmentMode) {
