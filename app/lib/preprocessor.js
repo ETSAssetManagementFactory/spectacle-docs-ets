@@ -15,6 +15,9 @@ module.exports = function(options, specData) {
   if (options.logoFile) {
     copy.logo = path.basename(options.logoFile);
   }
+  if (options.faviconFile) {
+    copy.favicon = path.basename(options.faviconFile);
+  }
 
   // The "body"-parameter in each operation is stored in a
   // separate field "_request_body".
