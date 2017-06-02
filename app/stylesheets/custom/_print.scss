@@ -4,7 +4,7 @@
 	.powered-by,
 	#introduction::before,
 	#sidebar{
-		display: none;
+		display: none !important;
 	}
 
 	html{

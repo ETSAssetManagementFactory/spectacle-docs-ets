@@ -70,7 +70,7 @@ $(function() {
 		var anchor      = $(this).attr('href'),
 			linkUrl     = window.location.href.split('#')[0] + anchor,
 			$icon       = $('<i>').addClass('fa fa-link').attr('aria-hidden', 'true'),
-			$anchorLink = $('<a>').attr('href', anchor).addClass('is-anchor-link'),
+			$anchorLink = $('<a>').attr('href', anchor).addClass('is-anchor-link hide-on-print'),
 			$anchor     = $(anchor).addClass('is-anchor');
 
 		// Create objects on DOM
