@@ -1,0 +1,34 @@
+.is-anchor{
+	position: relative;
+	.is-anchor-link{
+		opacity: .1;
+		border: 0;
+		color: rgb(200,200,200);
+		cursor: pointer;
+		display: block;
+		font-family: FontAwesome;
+		font-size: 1.5rem;
+		transition: all ease-in-out .2s;
+
+		// Box size & centering content
+		$size: 2em;
+		height: $size;
+		width: $size;
+		line-height: $size;
+		text-align: center;
+
+		// Position
+		position: absolute;
+		top: 0;
+		left: -$size;
+
+		&:hover{
+			color: $color-ets-blue;
+		}
+	}
+	&:hover{
+		.is-anchor-link{
+			opacity: 1;
+		}
+	}
+}

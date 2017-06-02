@@ -71,3 +71,7 @@ code{
 	line-height: 2;
 	padding: 0.25rem 0.5rem;
 }
+#spectacle article h1,
+#spectacle article h1+.panel>h2{
+	padding-top: 0;
+}

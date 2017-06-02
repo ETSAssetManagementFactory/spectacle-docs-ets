@@ -119,15 +119,15 @@ Traverse.prototype._events = function() {
     });
   })
 
-  this.$element.on('click', 'a[href^="#"]', function(e) { //'click.zf.traverse'
-      e.preventDefault();
-      var arrival   = this.getAttribute('href').replace(".", "\\."),
-          scrollPos = $(arrival).offset().top - _this.options.barOffset; // - _this.options.threshold / 2 - _this.options.barOffset;
+  // this.$element.on('click', 'a[href^="#"]', function(e) { //'click.zf.traverse'
+  //     e.preventDefault();
+  //     var arrival   = this.getAttribute('href').replace(".", "\\."),
+  //         scrollPos = $(arrival).offset().top - _this.options.barOffset; // - _this.options.threshold / 2 - _this.options.barOffset;
 
-      $body.stop(true).animate({
-        scrollTop: scrollPos
-      }, opts);
-    });
+  //     $body.stop(true).animate({
+  //       scrollTop: scrollPos
+  //     }, opts);
+  //   });
 };
 
 /**

@@ -22,6 +22,8 @@ var defaults = {
     targetDir: path.resolve(process.cwd(), 'public'),
     targetFile: 'index.html',
     appDir: path.resolve(__dirname, 'app'),
+    modules: path.resolve(__dirname, 'node_modules'),
+    scrollmagic: path.resolve(__dirname, 'node_modules/scrollmagic/scrollmagic/minified'),
     configFile: path.resolve(__dirname, 'app/lib/config.js'),
     cacheDir: tmp.dirSync({ unsafeCleanup: true, prefix: 'spectacle-' }).name
 };
@@ -161,6 +163,7 @@ module.exports = function (options) {
             grunt.task.run('javascripts');
         }
         grunt.task.run('copy:images');
+        grunt.task.run('copy:scrollmagic');
         if (opts.faviconFile) {
             if(opts.faviconFile.startsWith('http')){
                 grunt.task.run('curl:favicon');
