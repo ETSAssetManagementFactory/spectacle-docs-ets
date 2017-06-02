@@ -15,7 +15,15 @@
 #spectacle #docs .example-box {
 	background-color: transparent;
 }
-#spectacle .large-6, #spectacle .doc-content, #spectacle article h1.doc-title, #spectacle article > h1, #spectacle article > h2, #spectacle article .panel > h2, #spectacle article .panel > h3, #spectacle article .doc-copy, #spectacle article .doc-examples{
+#spectacle .large-6,
+#spectacle .doc-content,
+#spectacle article h1.doc-title,
+#spectacle article > h1,
+#spectacle article > h2,
+#spectacle article .panel > h2,
+#spectacle article .panel > h3,
+#spectacle article .doc-copy,
+#spectacle article .doc-examples{
 	width: 100%;
 }
 #spectacle article .doc-examples h5{
