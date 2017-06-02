@@ -67,14 +67,17 @@ $(function() {
 
 	// Create anchor links
 	$('nav a').each(function(){
-		var anchor = $(this).attr('href');
-			$icon = $('<i>').addClass('fa fa-link').attr('aria-hidden', 'true'),
+		var anchor      = $(this).attr('href'),
+			linkUrl     = window.location.href.split('#')[0] + anchor,
+			$icon       = $('<i>').addClass('fa fa-link').attr('aria-hidden', 'true'),
 			$anchorLink = $('<a>').attr('href', anchor).addClass('is-anchor-link'),
-			$anchor = $(anchor).addClass('is-anchor');
+			$anchor     = $(anchor).addClass('is-anchor');
 
-		$anchorLink.append($icon)
-		$anchor.append($anchorLink)
+		// Create objects on DOM
+		$anchorLink.append($icon);
+		$anchor.append($anchorLink);
 
+		// Create the scene
 		new ScrollMagic.Scene({
 			triggerElement: anchor,
 			duration: 0,	// the scene should last for a scroll distance of 100px
@@ -86,56 +89,7 @@ $(function() {
 			// window.location.hash = anchor;
 		})
 		.addTo(controller); // assign the scene to the controller
-
 	})
-
-
-	// var currentHash = "#introduction"
-    // $(document).scroll(function () {
-    //     $('.is-anchor-link').each(function () {
-    //         var top = window.pageYOffset;
-    //         var distance = top - $(this).offset().top;
-    //         var hash = $(this).attr('href');
-    //         // 30 is an arbitrary padding choice, 
-    //         // if you want a precise check then use distance===0
-    //         if (distance < 30 && distance > -30 && currentHash != hash) {
-    //             window.location.hash = (hash);
-    //             currentHash = hash;
-    //         }
-    //     });
-    // });
-
-	// $('[data-traverse-target]').each(function(){
-	// 	var anchor = $(this).attr('data-traverse-target');
-	// 	var content = "\f0c1";
-
-	// 	console.log('anchor');
-	// 	console.log(anchor);
-
-	// 	$(this).addClass('is-anchor');
-	// 	$(this).append($('<div>').addClass('is-anchor-link'));
-	// })
-
-	// init controller
-
-	// // create a scene
-	// var scene = new ScrollMagic.Scene({
-	// 		triggerElement: "#tag-Advice",
-	// 		duration: 0,	// the scene should last for a scroll distance of 100px
-	// 		offset: 500		// start this scene after scrolling for 50px
-	// 	})
-	// 	.setClassToggle("#tag-Advice", "active") // add class toggle
-	// 	// .setPin("#tag-Advice") // pins the element for the the scene's duration)
-	// 	.on('enter', function(e){
-	// 		console.log('this')
-	// 		console.log(this)
-	// 		console.log('e')
-	// 		console.log(e)
-	// 	})
-	// 	.addTo(controller); // assign the scene to the controller
-
-
-
 
 	// Copy text to clipboard
 	function copyToClipboard(val) {
