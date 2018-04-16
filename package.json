@@ -1,5 +1,5 @@
 {
-  "name": "spectacle-docs-ets",
+  "name": "spectacle-docs-etsfactory",
   "version": "0.8.27",
   "description": "Generate beautiful static API documentation from OpenAPI/Swagger 2.0 specifications (theme by ETS)",
   "preferGlobal": true,
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ETSAssetManagementFactory/spectacle-docs-ets.git"
+    "url": "git+https://github.com/etsfactory/spectacle-docs-etsfactory.git"
   },
   "keywords": [
     "openapi",
