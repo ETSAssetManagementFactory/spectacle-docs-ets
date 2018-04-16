@@ -1,6 +1,6 @@
 {
   "name": "spectacle-docs-ets",
-  "version": "0.8.26",
+  "version": "0.8.27",
   "description": "Generate beautiful static API documentation from OpenAPI/Swagger 2.0 specifications (theme by ETS)",
   "preferGlobal": true,
   "bin": {
