@@ -20,13 +20,15 @@
         <ul>
           {{#each operations}}
             <li>
-              <a href="#operation-{{htmlId path}}-{{htmlId method}}">
-                {{#if summary}}
+              {{#if summary}}
+                <a href="#operation-{{htmlId path}}-{{htmlId method}}" title="{{summary}}">
                   {{summary}}
-                {{else}}
+                </a>
+              {{else}}
+                <a href="#operation-{{htmlId path}}-{{htmlId method}}" title="{{toUpperCase method}} {{path}}">
                   {{toUpperCase method}} {{path}}
-                {{/if}}
-              </a>
+                </a>
+              {{/if}}
             </li>
           {{/each}}
         </ul>
@@ -40,13 +42,15 @@
         <ul> -->
           {{#each .}}
             <!-- <li> -->
-              <a href="#operation-{{htmlId path}}-{{htmlId method}}">
-                {{#if summary}}
+              {{#if summary}}
+                <a href="#operation-{{htmlId path}}-{{htmlId method}}" title="{{summary}}">
                   {{summary}}
-                {{else}}
+                </a>  
+              {{else}}
+                <a href="#operation-{{htmlId path}}-{{htmlId method}}" title="{{toUpperCase method}} {{path}}">
                   {{toUpperCase method}} {{path}}
-                {{/if}}
-              </a>
+                </a>
+              {{/if}}
             <!-- </li> -->
           {{/each}}
         <!-- </ul>
@@ -59,7 +63,7 @@
 
   <h5>Schema Definitions</h5>
   {{#each definitions}}
-    <a href="#definition-{{htmlId @key}}">
+    <a href="#definition-{{htmlId @key}}" title="{{@key}}">
       {{@key}}
     </a>
   {{/each}}
