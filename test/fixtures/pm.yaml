@@ -1,0 +1,2433 @@
+swagger: '2.0'
+info:
+    description: |
+        El API PM (Portfolio Management) permite al usuario interactuar con el sistema de recomendaciones y
+        acceder a la información de los portfolios.
+    version: 1
+    title: PM API
+    # termsOfService: http://urlTermsOfService/
+    # contact:
+    #     name: API Support
+    #     url: http://urlSUpportSiExiste
+    #     email: hello@example.com
+    # license:
+    #     name: Apache 2.0 o la que sea
+    #     url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# host: LOCALHOST
+basePath: /
+tags:
+  - name: Portfolios
+schemes:
+  - http
+paths:
+    /v1/portfolios/search/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Búsqueda de portfolios a partir de un conjunto de propiedades pasadas por parámetro. En esta versión únicamente está implementada la búsqueda por metaportfolioId. Además, de manera opcional se permite filtrar por sabor.
+
+                Devuelve una lista de identificadores de portfolios.
+
+                Los tastes admitidos son: Validations, Recommended, Dirty Machine, Pure Machine Live, Pure Machine No Impacts, Pure Machine State Of The Art y Mix
+
+                Ejemplos:
+                ---
+
+                ``/v1/portfolios/search/?metaportfolioId=1&taste=Validations``
+                ``/v1/portfolios/search/?metaportfolioId=1``
+
+
+            operationId: search
+            produces:
+              - application/json
+            parameters:
+              - name: metaportfolioId
+                in: path
+                description: Identificador de metaportfolio
+                required: true
+                type: integer
+              - name: taste
+                in: path
+                description: Sabor
+                required: false
+                type: string
+            responses:
+                200:
+                    description: Devuelve una lista con los identificadores de los portfolios que cumplen con las condiciones de búsqueda.
+                    example: [4084]
+                400:
+                    description: |
+                      Error de validación: </br>
+                       · Los parámetros introducidos no son correctos. </br>
+    /v1/portfolios/:
+        post:
+            tags:
+              - Portfolios
+            description: |
+                Crea un nuevo portfolio a partir de los parámetros introducidos.
+
+                Ejemplo:
+                ---
+
+                ``/v1/portfolios/``
+
+                Devuelve OK si la petición ha sido recibida correctamente y se encuentra en proceso de creación de la cartera.
+
+            operationId: create_portfolio
+            produces:
+              - application/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - name: portfolio
+                description: Parámetros de creación de la cartera
+                in: body
+                schema:
+                  $ref: '#/definitions/PortfolioRequest'
+            responses:
+                200:
+                    description: Devuelve una lista con los ids de los portfolios creados.
+                    schema:
+                        type: array
+                        items:
+                            type: integer
+                            example: 123654
+                400:
+                    description: JSON inválido. El mensaje mostrará el error.
+                403:
+                    description: El usuario no tiene permisos para crear una cartera
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Modifica un portfolio a partir de los parámetros introducidos.
+
+                Ejemplo:
+                ---
+
+                ``/v1/portfolios/``
+
+                Devuelve OK si la petición ha sido recibida correctamente y se encuentra en proceso de modificación de la cartera.
+
+            operationId: edit_portfolio
+            produces:
+              - application/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - name: portfolio
+                description: Parámetros de modificación de la cartera
+                in: body
+                schema:
+                  $ref: '#/definitions/PortfolioEditRequest'
+            responses:
+                202:
+                    description: Petición de modificación aceptada.
+                400:
+                    description: JSON inválido. El mensaje mostrará el error.
+                403:
+                    description: El usuario no tiene permisos para modificar una cartera.
+    /v1/portfolios/{id}/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve la información de un portfolio.
+
+                Ejemplo:
+                ---
+
+                ``/v1/portfolios/103318/``
+
+                Se devuelve un documento JSON con la información de la cartera.
+
+            operationId: get_portfolio
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: El ID de la cartera.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve un la información de la cartera solicitada.
+                    schema:
+                        $ref: '#/definitions/Portfolio'
+                400:
+                    description: El identificador del portfolio es inválido.
+                404:
+                    description: El portfolio especificado no existe.
+    /v1/portfolios/{id}/strategy/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve la estrategia utilizada en la gestión del portfolio.
+
+                Si el portfolio no sigue ninguna estrategia este endpoint devuelve null.
+
+                La estructura de la información es diferente para cada estrategia,
+                pero todas ellas tienen un campo id con el identificador de la estrategia.
+
+                Ejemplo:
+
+                ``/v1/portfolios/115716/strategy/``
+
+                Se devuelve un documento JSON con la estrategia de la cartera.
+            operationId: strategy
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador para el que se solicita la estrategia.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve la información de la cartera solicitada.
+                404:
+                    description: Portfolio no encontrado
+                422:
+                    description: No se puede procesar la configuración
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Asigna al portfolio la estrategia a utilizar en su gestión.
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - in: body
+                name: strategy
+                description: |
+                    JSON con la estrategia de la cartera. La estrategia depende de la metodología de la cartera.
+                    Es obligatorio introducir un campo id con el id de la estrategia
+                required: true
+                schema:
+                    $ref: '#/definitions/Strategy'
+            responses:
+                200:
+                    description: Se ha realizado correctamente la inserción o actualización de la estrategia de la cartera.
+                400:
+                    description: |
+                      Error de validación: </br>
+                       · El cuerpo del mensaje debe ser un JSON válido. </br>
+                       · El formato del documento insertado no es correcto. </br>
+                403:
+                    description: El usuario no tiene permisos para realizar la solicitud
+                404:
+                    description: |
+                      · Portfolio no encontrado. </br>
+                      · Metodología no definida para el porfolio especificado. </br>
+                422:
+                    description: |
+                      · El portfolio no tiene un esquema validación definido. </br>
+                      · Definición de id mal definida en el esquema de validación. </br>
+                      · El esquema definido debe ser un JSON válido. </br>
+    /v1/portfolios/{id}/backtesting/:
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Carga la información del backtesting que se pasa al symbol asociado
+                al portfolio para tal efecto, Elimina la serie contenida en el symbol
+                previamente. Si no tuviera ningún symbol asociado para ello crea un symbol
+                de tipo internal con la información del backtesting y lo asocia al portfolio.
+
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - in: body
+                name: priceseries
+                description: |
+                    JSON con una serie de precios.
+                required: true
+                schema:
+                    $ref: '#/definitions/PricesSeries'
+            responses:
+                204:
+                    description: Se ha realizado correctamente la inserción o actualización.
+                400:
+                    description: |
+                      Error de validación: </br>
+                       · El cuerpo del mensaje debe ser un JSON válido. </br>
+                       · El formato del documento insertado no es correcto. </br>
+                403:
+                    description: El usuario no tiene permisos para realizar la solicitud
+                404:
+                    description: |
+                      · Portfolio no encontrado. </br>
+    /v1/portfolios/{id}/compartments/:
+        get:
+            tags:
+              - Portfolios
+            description: Devuelve una lista con los compartimentos pertenecientes a la cartera.
+            operationId: compartments
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera de la cual se quieren obtener los compartimentos
+                required: true
+                type: integer
+              - name: includedPreRecos
+                in: query
+                description: Indica si se debe devolver los compartimentos con estado pre-recomendado. En este caso el peso en cartera de los compartimentos deben tener en cuenta el peso de estos compartimentos.
+                required: false
+                type: boolean
+                deprecated: true
+            responses:
+                200:
+                    description: Devuelve una lista con los compartimentos de la cartera. Por cada uno de ellos se devuelve su identificador y el peso actual en la cartera
+                    schema:
+                        type: object
+                        required:
+                          - id
+                          - currentWeight
+                        properties:
+                            id:
+                                type: integer
+                                description: Identifcador del compartimento
+                                example: 119656
+                            currentWeight:
+                                type: number
+                                description: Peso actual del compartimento en la cartera
+                                example: 0.0993590556227406
+                404:
+                    description: Not Found
+    /v1/portfolios/{id}/ties/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve el límite de riesgo y la serie de DD del GAV de los portfolios reales del mismo producto que tienen un limite de riesgo superior al del portfolio gestionado.
+
+                Para portfolios teóricos y para portfolios reales sin portfolios de mayor riesgo en su mismo producto devuelve una lista vacia.
+            operationId: ties
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera de la cual se quieren obtener los ties
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve una lista con los GAVs de las carteras pertenecientes al mismo producto. Por cada uno de ellos se devuelve su risklimit y la serie de drawdowns
+                    schema:
+                        type: object
+                        required:
+                          - risklim
+                          - gavdd
+                        properties:
+                            gavdd:
+                                $ref: '#/definitions/PricesSeries'
+                            risklim:
+                                type: number
+                                description: Limite de riesgo del portfolio del que se muestra el GAV
+                                example: 0.5
+                404:
+                    description: Not Found
+    /v1/portfolios/{id}/positions/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Obtiene las posiciones de una cartera.
+
+                Si no se pasa ningún parámetro, devuelve las últimas
+
+                Ejemplos:
+
+                Obtiene las posiciones a una fecha dada:
+
+                ``/v1/portfolios/121392/positions/?period=20170504``
+
+
+                Obtiene las últimas posiciones:
+
+                ``/v1/portfolios/121392/positions/?period=last``
+
+
+                Obtiene las posiciones entre 2 fechas:
+
+                ``/v1/portfolios/121392/positions/?period=20170504-20170506``
+
+                Obtiene las posiciones para un periodo:
+
+                ``/v1/portfolios/121392/positions/?period=1Y``
+
+            operationId: positions
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera para la que se solicitan las posiciones.
+                required: true
+                type: integer
+              - name: period
+                in: query
+                description: |
+                    1Y, 3Y, 5Y, 10Y, last o un periodo seleccionado con formato "yyyyMMdd[-yyyyMMdd]". Si no se especifica period devuelve las últimas.
+                required: false
+                type: string
+            responses:
+                200:
+                    description: Devuelve las posiciones para el ID de la cartera solicitada en formato JSON a partir del dataframe resultante.
+                    schema:
+                        $ref: '#/definitions/Positions'
+                404:
+                    description: Not Found
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Actualiza las posiciones de la cartera.
+            operationId: set_positions
+            produces:
+              - aplication/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición.
+                type: string
+                required: true
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: positions
+                description: Lista de posiciones de la cartera.
+                in: body
+                schema:
+                  $ref: '#/definitions/Positions'
+            responses:
+                200:
+                    description: Información de valoración insertada
+                400:
+                    description: Error en la inserción de posiciones
+                404:
+                    description: Portfolio no encontrado
+    /v1/portfolios/{id}/trades/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Obtiene los trades de un portfolio.
+
+                Ejemplos:
+
+                Obtiene los trades a partir de una fecha dada:
+
+                ``/v1/portfolios/121392/trades/?period=20170424``
+
+
+                Obtiene los últimas trades:
+
+                ``/v1/portfolios/121392/trades/?period=last``
+
+
+                Obtiene los trades entre 2 fechas:
+
+                ``/v1/portfolios/121392/trades/?period=20170401-20170501``
+
+
+                Obtiene los trades para un periodo:
+
+                ``/v1/portfolios/121392/trades/?period=1Y``
+
+
+            operationId: trades
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera para la que se solicitan los trades.
+                required: true
+                type: integer
+              - name: period
+                in: query
+                description: |
+                    1Y, 3Y, 5Y, 10Y, last o un periodo seleccionado con formato "yyyyMMdd[-yyyyMMdd]".
+                    En el caso de que solo se especifique una fecha, se devuelve la serie de precios
+                    disponible hasta la última fecha disponible. Si no se especifica
+                    period devuelve los úlmos disponibles.
+                required: false
+                type: string
+            responses:
+                200:
+                    description: Devuelve los trades para el ID de la cartera solicitada en formato JSON a partir del dataframe resultante.
+                    schema:
+                        $ref: '#/definitions/Trades'
+                400:
+                    description: Formato de los parámetros no válido.
+                404:
+                    description: Identificador de portfolio no encontrado.
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Actualiza los trades de la cartera.
+            operationId: set_trades
+            produces:
+              - aplication/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición.
+                type: string
+                required: true
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: trades
+                description: Lista de trades de la cartera.
+                in: body
+                schema:
+                  $ref: '#/definitions/Trades'
+            responses:
+                200:
+                    description: Información de trades insertada
+                400:
+                    description: Error en la inserción de trades
+                404:
+                    description: Portfolio no encontrado
+    /v1/portfolios/{id}/frequenttrading/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve la información de frequent trading relativa al portfolio para un conjunto de symbols y una fecha dada.
+                Para cada symbol devuelve dos datos:
+
+                1. ``in``: nº de días desde que se incrementó la posición en el portfolio en la fecha dada (diferencia de días naturales entre la fecha dada y la última fecha de compra). Si la fecha dada y la fecha de compra es la misma devuelve 0. Si el portfolio nunca ha estado invertido en el symbol en la fecha dada devuelve null.
+
+                2. ``out``: nº de días desde que se redujo la posición en el portfolio (diferencia de días naturales entre la fecha dada y la fecha la última venta). Si la fecha dada y la fecha de venta es la misma devuelve 0. Si nunca ha invertido en el symbol devuelve null.
+
+                Si un activo nunca ha estado en cartera, tanto el campo ``in`` como ``out`` estarán a null.
+
+                La fecha es opcional y por defecto es cierre de ayer.
+                En el caso de funds y fundclass estos valores se refieren a la inversión del portfolio en cualquiera de las clases del fund.
+
+                ---
+                Ejemplos:
+
+                ``/v1/portfolios/120827/frequenttrading/?ids=19746,19742&date=20170510``
+
+                devuelve:
+                ```json
+                [{
+                "symbolId": 19746,
+                "out": 8,
+                "in": 8
+                },
+                {
+                "symbolId": 19742,
+                "out": 3872,
+                "in": 3886
+                }]```
+
+                ``/v1/portfolios/120827/frequenttrading/?ids=23518``
+
+                devuelve:
+                ```json
+                [{
+                "symbolId": 23518,
+                "out": null,
+                "in": null
+                }]```
+            operationId: frequent_trading
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera sobre la cual se solicita el frequent trading.
+                required: true
+                type: integer
+              - name: ids
+                in: query
+                description: Identificador de los símbolos para los cuales se solicita el frequent trading.
+                required: true
+                type: array
+                items:
+                    type: integer
+              - name: date
+                in: query
+                description: Fecha para la que se solicitan el frequent trading. Debe estar en formato ``YYYYMMDD``.
+                type: string
+            responses:
+                200:
+                    description: Devuelve el frequent trading de los símbolos indicados para la cartera solicitada.
+                    schema:
+                        type: array
+                        description: Array con el frequent trading de cada simbolo de la cartera.
+                        items:
+                            $ref: '#/definitions/Frequenttrading'
+                404:
+                    description: Not Found
+    /v1/portfolios/{id}/impacts/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve el impacto total y diario a tener en cuenta en la gestión de un determinado portfolio.
+
+                Para que los workers no tengan que tratar los impactos de distinta manera según las características del portfolio que recomiendan, este endpoint devuelve los impactos a tener en cuenta en la gestión de un determinado portfolio.
+
+                Descuenta además de los impactos el impacto parcial del porfolio gestionado.
+
+                Absorbe por tanto la complejidad a tener en cuenta en el cálculo de impactos para la gestión de un portfolio.
+
+                Solo se realizan recomendaciones sobre portfolios Compartment o portfolios Proper, por lo tanto para otro tipo de portfolio este endpoint devolverá un error.
+
+                Para los sabores Validation, Recommended, Dirty Machine y Pure Machine Live de portfolios Reales (Compartment o Proper) devolverá los impactos descontando del impacto total el impacto parcial y del diario el debido al portfolio que se está gestionando.
+
+                Para el resto de casos devuelve impactos cero.
+
+                ---
+                Ejemplos:
+
+                ``/v1/portfolios/6188/impacts/?ids=109944,80528&date=20170522``
+
+
+            operationId: impacts
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera para la que se quiere conocer el impacto
+                required: true
+                type: integer
+              - name: ids
+                in: query
+                description: Lista de symbolIds sobre la que se requiere el impacto que sobre ellos tiene el portfolio
+                required: true
+                type: array
+                items:
+                  type: integer
+              - name: date
+                in: query
+                description: Fecha para la que se quiere conocer los impactos.
+                required: true
+                type: string
+            responses:
+                200:
+                    description: Devuelve el impacto total y diario de la cartera en los symbolIds recibidos para la fecha dada
+                    schema:
+                        description: Array con los impactos sobre cada uno de los symbols.
+                        type: array
+                        items:
+                            $ref: "#/definitions/Impacts"
+                400:
+                    description: Parametrización inválida
+                406:
+                    description: El portfolio solicitado no es un portfolio gestionable (portfolios Proper y Compartment)
+    /v1/portfolios/{id}/assets/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve los patrimonios de la cartera indicada en la URL.
+                Además, se puede especificar la divisa en la que se devuelve el patrimonio con el parámetro currency.
+
+                ---
+                Ejemplos:
+
+                Obtiene el último patrimonio en euros:
+
+                ``/v1/portfolios/120827/assets/?period=last&currency=EUR``
+
+
+                Obtiene la serie completa de patrimonios:
+
+                ``/v1/portfolios/121628/assets/``
+            operationId: assets
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera para la que se solicita el patrimonio.
+                required: true
+                type: integer
+              - name: period
+                in: query
+                description: |
+                    1Y, 3Y, 5Y, 10Y, last o un periodo seleccionado con formato "yyyyMMdd-[yyyyMMdd]".
+                    En el caso de que solo se especifique una fecha, se devuelve la serie de precios
+                    disponible hasta la última fecha disponible. Si no se especifica
+                    period devuelve toda la serie.
+                required: false
+                type: string
+              - name: currency
+                in: query
+                description: Divisa en la cual se recupera la serie de patrimonios.
+                required: false
+                type: string
+            responses:
+                200:
+                    description: Devuelve la serie de patrimonios para el ID de la cartera solicitada.
+                    schema:
+                        $ref: '#/definitions/AssetsSeries'
+                400:
+                    description: Validation error
+                404:
+                    description: Not Found
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Actualiza el patrimonio del portfolio.
+            operationId: set_assets
+            produces:
+              - aplication/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición.
+                type: string
+                required: true
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: assets
+                description: Patrimonio del portfolio.
+                in: body
+                schema:
+                  $ref: '#/definitions/AssetsSeries'
+            responses:
+                200:
+                    description: Información de valoración insertada
+                400:
+                    description: Error en la inserción de patrimonios
+                404:
+                    description: Portfolio no encontrado
+    /v1/portfolios/{id}/nav/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve el NAV del portfolio.
+
+                ---
+                Ejemplos:
+
+                Obtiene el último NAV:
+
+                ``/v1/portfolios/120827/nav/?period=last``
+
+                Obtiene la serie completa del NAV:
+
+                ``/v1/portfolios/121628/nav/``
+            operationId: nav
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera para la que se solicita el NAV.
+                required: true
+                type: integer
+              - name: period
+                in: query
+                description: |
+                    1Y, 3Y, 5Y, 10Y, last o un periodo seleccionado con formato "yyyyMMdd[-yyyyMMdd]".
+                    En el caso de que solo se especifique una fecha, se devuelve la serie de precios
+                    disponible hasta la última fecha disponible. Si no se especifica
+                    period devuelve toda la serie.
+                required: false
+                type: string
+            responses:
+                200:
+                    description: Devuelve la serie del NAV para el ID de la cartera solicitada.
+                    schema:
+                        $ref: '#/definitions/PricesSeries'
+                400:
+                    description: Validation error
+                404:
+                    description: Not Found
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Actualiza el NAV del portfolio.
+            operationId: set_nav
+            produces:
+              - aplication/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición.
+                type: string
+                required: true
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: nav
+                description: NAV del portfolio.
+                in: body
+                schema:
+                  $ref: '#/definitions/PricesSeries'
+            responses:
+                200:
+                    description: Información de valoración insertada
+                400:
+                    description: Error en la inserción del nav
+                404:
+                    description: Portfolio no encontrado
+    /v1/portfolios/{id}/gav/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve el GAV del portfolio.
+
+                ---
+                Ejemplos:
+
+                Obtiene el último GAV:
+
+                ``/v1/portfolios/120827/gav/?period=last``
+
+                Obtiene la serie completa del GAV:
+
+                ``/v1/portfolios/121628/gav/``
+            operationId: gav
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera para la que se solicita el GAV.
+                required: true
+                type: integer
+              - name: period
+                in: query
+                description: |
+                    1Y, 3Y, 5Y, 10Y, last o un periodo seleccionado con formato "yyyyMMdd[-yyyyMMdd]".
+                    En el caso de que solo se especifique una fecha, se devuelve la serie de precios
+                    disponible hasta la última fecha disponible. Si no se especifica
+                    period devuelve toda la serie.
+                required: false
+                type: string
+            responses:
+                200:
+                    description: Devuelve la serie del NAV para el ID de la cartera solicitada.
+                    schema:
+                        $ref: '#/definitions/PricesSeries'
+                400:
+                    description: Validation error
+                404:
+                    description: Not Found
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Actualiza el GAV del portfolio.
+            operationId: set_gav
+            produces:
+              - aplication/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición.
+                type: string
+                required: true
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: nav
+                description: GAV del portfolio.
+                in: body
+                schema:
+                  $ref: '#/definitions/PricesSeries'
+            responses:
+                200:
+                    description: Información de valoración insertada
+                400:
+                    description: Error en la inserción del gav
+                404:
+                    description: Portfolio no encontrado
+    /v1/portfolios/{id}/gav/frictionConfig/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve la configuración de rozamiento del GAV para valorar un NAV teórico y aproximado
+
+                ---
+                Ejemplos:
+
+                ``http://etsprd1:8002/v1/portfolios/5095/gav/frictionConfig/``
+            operationId: fees
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve la configuración para el ID de la cartera solicitada.
+                    schema:
+                        $ref: '#/definitions/Fee'
+                400:
+                    description: Validation error
+                404:
+                    description: Not Found
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Modifica la configuración de rozamiento del GAV para valorar un NAV teórico y aproximado
+
+            operationId: fees
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: config
+                description: Configuración del rozamiento
+                in: body
+                schema:
+                  $ref: '#/definitions/Fee'
+            responses:
+                204:
+                    description: Valore modificados correctamente
+                400:
+                    description: Validation error
+                404:
+                    description: Not Found
+    /v1/portfolios/{id}/universe/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Obtiene los identificadores de los símbolos que forman el universo de la cartera.
+                Si se especifica una fecha obtiene el universo a esa fecha, si no, devuelve el universo actual.
+
+            operationId: get_universe
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera para la que se solicitan los símbolos.
+                required: true
+                type: integer
+              - name: date
+                in: query
+                description: Fecha en formato YYYYMMDD.
+                required: true
+                type: string
+            responses:
+                200:
+                    description: Devuelve lista con los identificadores de los símbolos.
+                    schema:
+                        type: array
+                        items:
+                          type: integer
+                400:
+                    description: Validation error
+                404:
+                    description: Portfolio not found
+    /v1/portfolios/{id}/calendar/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve una lista de fechas con las fechas de las próximas recomendaciones del portfolio. Se puede seleccionar un periodo de tal forma que te devuelve las recomendaciones previstas en ese periodo. El periodo acepta un rango fechas, 2 semanas (2W), 1M (1 mes) o next delvolviéndote la próxima recomendación. Por defecto devuelve únicamente la fecha de la próxima recomendación.
+            operationId: get_calendar
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: period
+                in: query
+                description: YYYYMMDD-YYYYMMDD, 2W, 1M, next.
+                required: false
+                type: string
+            responses:
+                200:
+                    description: Lista de fechas con las fechas de las próximas recomendaciones.
+                400:
+                    description: El identificador del portfolio no es número
+                404:
+                    description: Portfolio no encontrado
+    /v1/portfolios/{id}/calendar/pattern/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve el patrón de fechas en las que se debe recomendar la cartera.
+            operationId: get_calendar_pattern
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve el patrón
+                    schema:
+                        $ref: '#/definitions/Pattern'
+                400:
+                    description: El identificador del portfolio no es número
+                404:
+                    description: Portfolio no encontrado
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Establece el patrón de fechas en las que se debe recomendar la cartera.
+            operationId: set_calendar_pattern
+            produces:
+              - aplication/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: pattern
+                description: Patrón de fechas
+                in: body
+                schema:
+                  $ref: '#/definitions/Pattern'
+            responses:
+                204:
+                    description: Patrón actualizado
+                400:
+                    description: Error en la validación del JSON
+                404:
+                    description: Portfolio no encontrado
+    /v1/portfolios/{id}/operativeOffset/:
+        get:
+            tags:
+              - Portfolios
+            description: |
+                Devuelve el offset operativo de la cartera.
+            operationId: get_operative_offset
+            produces:
+              - aplication/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve el offset operativo
+                    schema:
+                        $ref: '#/definitions/OperativeOffset'
+                400:
+                    description: El identificador del portfolio no es número
+                404:
+                    description: Portfolio no encontrado
+        put:
+            tags:
+              - Portfolios
+            description: |
+                Establece el offset operativo de la cartera.
+            operationId: set_operative_offset
+            produces:
+              - aplication/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - name: id
+                in: path
+                description: Identificador de la cartera.
+                required: true
+                type: integer
+              - name: pattern
+                description: Offset Operativo
+                in: body
+                schema:
+                  $ref: '#/definitions/OperativeOffset'
+            responses:
+                204:
+                    description: Offset Operativo actualizado
+                400:
+                    description: Error en la validación del JSON
+                404:
+                    description: Portfolio no encontrado
+    /v1/metaportfolios/:
+        get:
+            tags:
+              - Metaportfolios
+            description: |
+                Devuelve la información de un metaportfolio.
+
+                Ejemplo:
+                ---
+
+                ``/v1/metaportfolios/1/``
+
+                Se devuelve un documento JSON con la información de un metaportfolio.
+
+            operationId: get_metaportfolio
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: El ID del metaportfolio.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve la información del metaportfolio solicitado.
+                    schema:
+                        $ref: '#/definitions/Metaportfolio'
+                400:
+                    description: El identificador del metaportfolio es inválido.
+                404:
+                    description: El metaportfolio especificado no existe.
+    /v1/recos/:
+        post:
+            tags:
+              - Recos
+            description: |
+                Solicita la generación de una recomendacion.
+                Este endpoint recoge la petición y devuelve un identificador
+                de recomendaciónsolicitada, con las que el usuario podrá consultarla
+                cuando el sistema las haya procesado.
+            operationId: create_recommendation
+            produces:
+              - application/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - name: Recomendación
+              - name: Recos
+                description: Solicitud de recomendación
+                in: body
+                schema:
+                  $ref: '#/definitions/RecoRequest'
+            responses:
+                200:
+                    description: |
+                       Devuelve un 200 para confirmar que se ha creado la solicitud junto con
+                       un objeto con el id y portfolioId.
+                400:
+                    description: JSON inválido. El mensaje mostrará el error.
+                403:
+                    description: El usuario no tiene permisos para solicitar una recomendación
+    /v1/recos/search/:
+        get:
+            tags:
+              - Recos
+            description: |
+                Busca las recomendaciones que se corresponden con los parámetros indicados en la URL.
+                Devuelve los identificadores de las recomendaciones encontradas.
+
+                La petición contempla 2 casos:
+
+                1. Obtener los identificadores de las recomendaciones de un cliente.
+
+                2. Obtener los identificadores de las recomendaciones de una cartera.
+
+                En ambos casos se permite obtener opcionalmente las recomendaciones para un determinado periodo y
+                un estado dados.
+                Los 2 casos son incompatibles entre sí.
+
+                Ejemplo:
+                ---
+
+                ``/v1/recos/search/?client=finhub&status=Processed``
+
+                ``/v1/recos/search/?portfolioId=port_1&period=1Y&status=Published``
+
+                Se devuelve un documento JSON con la información de la recomendaciones
+
+            operationId: retrieveRecommendation
+            produces:
+              - application/json
+            parameters:
+              - name: portfolioId
+                in: query
+                description: Identificador del porfolio del que se quieren recuperar sus recomendaciones.
+                required: true
+                type: string
+              - name: client
+                in: query
+                description: Nombre del cliente del que se quieren recuperar sus recomendaciones.
+                required: true
+                type: string
+              - name: period
+                in: query
+                description: |
+                    1Y, 3Y, 5Y, 10Y, last o un periodo seleccionado con formato "yyyyMMdd[-yyyyMMdd]".
+                    Si no se especifica period devuelve todas las recomendaciones
+                required: false
+                type: string
+              - name: status
+                in: query
+                description: Estado de las recomendaciones que queremos obtener.
+                required: false
+                type: string
+                enum:
+                      - Requested
+                      - In Process
+                      - Processed
+                      - Error
+                      - Error Reported
+                      - Published
+            responses:
+                200:
+                    description: Devuelve un la información de la recomendacion solicitada.
+                    schema:
+                      type: array
+                      items:
+                          type: integer
+                          example: 1584
+                400:
+                    description: Validation error. El formato de los parámetros no es correcto.
+                404:
+                    description: Not Found
+    /v1/recos/{id}/:
+        get:
+            tags:
+              - Recos
+            description: |
+                Devuelve la recomendacion solicitada.
+
+                Ejemplo:
+                ---
+
+                ``/v1/recos/260/``
+
+                Se devuelve un documento JSON con la información de la recomendación.
+
+            operationId: retrieveRecomendacion
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: El ID de la recomendación.
+                required: true
+                type: integer
+              - name: fields
+                in: query
+                description: Campos a añadir a la información obtenida.
+                type: array
+                items:
+                    type: string
+                    enum:
+                      - status
+                      - inProcessDate
+                      - processedDate
+                      - requestedDate
+                      - publishedDate
+                      - errorReportedDate
+                      - reco
+                      - currency
+                      - user
+                      - currentPositions
+                      - portfolioId
+                      - strategyId
+                      - configuration
+                      - valuationDate
+                      - client
+                      - id
+            responses:
+                200:
+                    description: Devuelve un la información de la recomendacion solicitada.
+                    schema:
+                        $ref: '#/definitions/RecommendationResponse'
+                400:
+                    description: Validation error. El formato de los parámetros no es correcto.
+                404:
+                    description: Not Found
+    /v1/recos/publish/:
+        post:
+            tags:
+              - Recos
+            description: |
+                Solicita la publicación de una recomendación aún no publicada.
+
+                Previamente a publicar en el bus comprueba que las posiciones recibidas suman 1.
+                Si no es así devuelve error 422.
+            operationId: publish_reco
+            produces:
+              - application/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - name: Recomendación
+                description: Una recomendación
+                in: body
+                schema:
+                    $ref: '#/definitions/Recommendation'
+            responses:
+                202:
+                    description: Devuelve un 202 para confirmar que se ha creado la recomendación.
+                400:
+                    description: Validation error. El formato del documento insertado no es correcto.
+                403:
+                    description: El usuario no tiene permisos para realizar la solicitud
+                409:
+                    description: La recomendación ya fue publicada anteriormente
+                422:
+                    description: Las posiciones no suman 1.
+                                 Ya existe una recomendación para ese día y para esa cartera.
+                                 La recomendación se encuentra en un estado no válido para publicar.
+    /v1/recos/{id}/publish/:
+        post:
+            tags:
+              - Recos
+            description: |
+                Solicita la publicación de una recomendación aún no publicada a partir del identificador.
+
+                Previamente a publicar en el bus comprueba que las posiciones de la reco suman 1.
+                Si no es así devuelve error 422.
+            operationId: publish_reco_by_id
+            produces:
+              - application/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición
+                type: string
+                required: true
+              - name: Recomendación
+              - name: id
+                in: path
+                description: El ID de la recomendación.
+                required: true
+                type: integer
+            responses:
+                202:
+                    description: Devuelve un 202 para confirmar que se ha creado la recomendación.
+                400:
+                    description: Validation error. El formato del identificador no es válido.
+                403:
+                    description: El usuario no tiene permisos para realizar la solicitud
+                409:
+                    description: La recomendación ya fue publicada anteriormente
+                422:
+                    description: Las posiciones no suman 1.
+                                 Ya existe una recomendación para ese día y para esa cartera.
+                                 La recomendación se encuentra en un estado no válido para publicar.
+    /v1/recos/{id}/orders/:
+        get:
+            tags:
+              - Recos
+            description: |
+                Devuelve las orders de la recomenedación que se corresponde con el identificador indicado en la URL.
+
+                Ejemplo:
+                ---
+
+                ``/v1/recos/260/orders/``
+
+                Se devuelve una lista con la información de las ordenes.
+
+            operationId: retrieveRecomendacion
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: El ID de la recomendación.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve un la información de la recomendacion solicitada.
+                    schema:
+                      type: array
+                      items:
+                          $ref: '#/definitions/RecommendationOrder'
+                404:
+                    description: Not Found
+    /v1/recos/{id}/strategy/:
+        get:
+            tags:
+              - Recos
+            description: |
+                Devuelve la estrategia de la recomenedación que se corresponde con el identificador indicado en la URL.
+
+                Ejemplo:
+                ---
+
+                ``/v1/recos/260/strategy/``
+
+                Devuelve un string con la información de la estrategia de la recomendación solicitada.
+
+            operationId: retrieveRecomendacion
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: El ID de la recomendación.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve la estrategia de la recomendacion solicitada.
+                    schema:
+                        type: object
+                        required:
+                          - id
+                        properties:
+                            id:
+                                type: string
+                                description: Identifcador de la estrategia
+                                example: mt01
+                404:
+                    description: Not Found
+    /v1/recos/{id}/attachment/:
+        get:
+            tags:
+              - Recos
+            description: |
+                Información adjunta a la reco. Los worker disponen de este campo para almacenar información
+                relativa a la reco para un uso discreccional. La información se guarda en un string pero es
+                cosa del usuario que guarda, cómo lo guarda y cómo lo interpreta cuando lo recupera.
+
+                Ejemplo:
+                ---
+
+                ``/v1/recos/260/attachment/``
+
+                Devuelve un string con la información del attachment de la recomendación solicitada.
+
+            operationId: get_reco_attachment
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: El ID de la recomendación.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve el attachment de la recomendacion solicitada.
+                404:
+                    description: Not Found
+        put:
+            tags:
+              - Recos
+            description: |
+                Configura la información adjunta a la reco. La información se guarda en un
+                string pero es cosa del usuario que guarda, cómo lo guarda y cómo lo
+                interpreta cuando lo recupera.
+            operationId: set_reco_attachment
+            produces:
+              - application/json
+            parameters:
+              - in: header
+                name: username
+                description: Nombre del usuario que realiza la petición.
+                type: string
+                required: true
+              - name: id
+                in: path
+                description: El ID de la recomendación.
+                required: true
+                type: integer
+            responses:
+                200:
+                    description: Devuelve el attachment de la recomendación solicitada.
+                403:
+                    description: El usuario no tiene permisos para realizar la solicitud
+                404:
+                    description: Not Found
+    /v1/recos/dates/:
+        get:
+            tags:
+              - Recos
+            description: |
+                Obtiene las fechas de las recomendaciones publicadas de una cartera en un periodo.
+                El objeto devuelto es una lista de pares (id, date) con el identificador
+                de la recomendación y su fecha de publicación.
+
+                Ejemplo:
+                ---
+
+                ``/v1/recos/dates/?portfolioId=122087&period=YTD``
+
+                Devuelve una lista de pares (id, date).
+
+            operationId: get_recos_dates
+            produces:
+              - application/json
+            parameters:
+              - name: id
+                in: path
+                description: Identificador de la cartera para la que se solicitan las posiciones.
+                required: true
+                type: integer
+              - name: period
+                in: query
+                description: |
+                    1D, 1M, 3M, 6M, 1Y, 3Y, 5Y, 10Y, YTD, last o un periodo seleccionado con formato "yyyyMMdd[-yyyyMMdd]". Si no se especifica period devuelve las últimas.
+                required: false
+                type: string
+            responses:
+                200:
+                    description: Devuelve una lista de pares (id, date) con las fechas de las recomendaciones publicadas junto con su identificador.
+                400:
+                    description: Query string no válido
+    /v1/impacts/:
+        get:
+            tags:
+              - Impacts
+            description: |
+                Devuelve el impacto total y diario del asesoramiento de de ETS en un conjunto de symbols para una fecha dada.
+
+                El impacto total de ETS sobre un symbol es el porcentaje del patrimonio del symbol que se ha invertido realmente
+                por asesoramiento de ETS.
+
+                El impacto diario de ETS sobre un symbol es el porcentaje del patrimonio del symbol que se invierte por
+                asesoramiento de ETS en una fecha dada.
+
+                A la hora de calcular los impactos se tiene en cuenta las operaciones de todas las carteras reales y de los clones
+                que generan impacto. Se tiene en cuenta tanto los trades ya ejecutados como las órdenes pendientes de ejecución.
+
+                El impacto es un número entre 0 y 1, que normalmente estará en las proximidades del 0. Un impacto 0 es que no hay
+                inversión debida a ETS. Un impacto de 1 sería que todo el patrimonio que tiene el symbol es debido al asesoramiento
+                de ETS (límite que lógicamente no se alcanza). Valores fuera de ese intervalo no tienen sentido
+
+                Ejemplo:
+                ---
+
+                ``/v1/portfolios/impacts/?ids=109944,80528&date=20170522``
+
+
+            operationId: impacts
+            produces:
+              - aplication/json
+            parameters:
+              - name: ids
+                in: query
+                description: Lista de symbolIds sobre la que se quiere conocer el impacto.
+                required: true
+                type: array
+                items:
+                  type: integer
+              - name: date
+                in: query
+                description: Fecha para la que se quiere conocer los impactos.
+                required: true
+                type: string
+            responses:
+                200:
+                    description: Devuelve el impacto total y diario de la cartera en los symbolIds recibidos para la fecha dada
+                    schema:
+                        description: Array con los impactos sobre cada uno de los symbols.
+                        type: array
+                        items:
+                            $ref: "#/definitions/Impacts"
+                400:
+                    description: Parametrización inválida
+definitions:
+    AssetsSeries:
+        type: object
+        description: Serie de assets.
+        required:
+          - prices
+          - dates
+        properties:
+            assets:
+                type: array
+                items:
+                    type: number
+                    example: 0.25148574659
+            dates:
+                type: array
+                items:
+                    type: number
+                    example: 2.23697526135132
+    PricesSeries:
+        type: object
+        description: Serie de precios.
+        required:
+          - prices
+          - dates
+        properties:
+            prices:
+                type: array
+                items:
+                    type: number
+                    example: 0.25148574659
+            dates:
+                type: array
+                items:
+                    type: string
+                    example: "20171022"
+    Trades:
+        type: object
+        required:
+          - date
+          - symbolId
+          - type
+          - weight
+          - shares
+          - price
+          - currencyRate
+          - amount
+        properties:
+            date:
+                description: Fecha del trade
+                type: string
+                example: 20170517
+            symbolId:
+                description: Identificador interno del symbol asociado a la posición.
+                type: integer
+                example: 41897
+            type:
+                description: Tipo de trade (buy/sell)
+                type: string
+                example: buy
+            weight:
+                description: Peso del trade
+                type: number
+                example: 0.10600444199511803
+            shares:
+                description: Número de participaciones de la operación
+                type: integer
+                example: 2550
+            price:
+                type: number
+                description: Valor del precio del symbol.
+                example: 0.23151780664920807
+            currencyRate:
+                type: number
+                description: Precio del cambio de moneda.
+                example: 1
+            amount:
+                type: integer
+                description: Número de subscripciones de la operación.
+                example: 2000
+    RecoRequest:
+        type: object
+        required:
+          - portfolioId
+          - strategy
+          - currentPositions
+          - client
+          - currency
+          - executionDate
+        properties:
+            portfolioId:
+                type: integer
+                description: Identificador del Portfolio.
+                example: 12658
+            strategy:
+                description: Estrategia utilizada en la recomendación.
+                $ref: '#/definitions/Strategy'
+            executionDate:
+                type: string
+                description: Fecha de la ejecución de la reco.
+                example: 20171004
+            currentPositions:
+                description: Posiciones abiertas de la cartera en el momento de solicitud de la recomendación.
+                $ref: '#/definitions/Positions'
+            client:
+                type: string
+                description: Nombre del cliente que inició la solicitud.
+                example: finhub
+            currency:
+                type: string
+                description: Identificador de la divisa.
+                example: EUR
+    RecommendationResponse:
+        type: object
+        required:
+          - id
+          - portfolioId
+          - strategy
+          - user
+          - currentPositions
+        properties:
+            id:
+                type: integer
+                description: Identificador del Portfolio.
+                example: 12658
+            portfolioId:
+                type: integer
+                description: Identificador del Portfolio.
+                example: 12658
+            strategy:
+                $ref: '#/definitions/Strategy'
+            user:
+                type: string
+                description: Nombre del usuario que realizó la recomendación.
+            currentPositions:
+                type: array
+                items:
+                    $ref: '#/definitions/Positions'
+            client:
+                type: string
+                description: Nombre del cliente que inició la solicitud.
+            currency:
+                $ref: '#/definitions/Currency'
+            requestedDate:
+                type: string
+                description: Fecha de la que se solicita la recomendación en formato YYYYMMDD HH:MM:SS.
+                example: 20150215 11:00:12
+            inProcessDate:
+                type: string
+                description: Fecha a la que se empieza a processarla recomendación en formato YYYYMMDD HH:MM:SS.
+                example: 20150215 11:00:13
+            processedDate:
+                type: string
+                description: Fecha a la que ababa de procesarse la recomendación en formato YYYYMMDD HH:MM:SS.
+                example: 20150215 11:00:22
+            publishedDate:
+                type: string
+                description: Fecha a la que se publica la recomendación en formato YYYYMMDD HH:MM:SS.
+                example: 20150215 11:01:12
+            reco:
+                type: array
+                items:
+                    $ref: '#/definitions/RecommendationOrder'
+    Recommendation:
+        description: Objeto de recomendación para publicar en BO a través del bus.
+        type: object
+        required:
+          - portfolioId
+          - date
+          - executionDate
+          - confidenceLevel
+          - compartmentWeight
+          - orders
+        properties:
+            portfolioId:
+                type: integer
+                description: Identificador del Portfolio.
+                example: 12658
+            date:
+                type: string
+                description: Fecha de la recomendación en formato YYYYMMDD.
+                example: 20150215
+            executionDate:
+                type: string
+                description: Fecha de ejecución de la recomendación en formato YYYYMMDD.
+                example: 20150215
+            confidenceLevel:
+                type: number
+                description: Nivel de confianza.
+                example: 1
+            compartmentWeight:
+                type: number
+                description: Peso del compartimento
+                example: 1
+            orders:
+                type: array
+                description: Array de órdenes de recomendación.
+                items:
+                    $ref: '#/definitions/RecommendationOrder'
+    Positions:
+        description: Conjunto de posiciones en una fecha dada. Está formado por una fecha de valoración y una lista de posiciones.
+        type: object
+        required:
+          - valuationDate
+          - positions
+        properties:
+            valuationDate:
+                type: string
+                description: Fecha de las posiciones
+                example: 20170517
+            positions:
+                description: Lista de posiciones de la fecha dada.
+                type: array
+                items:
+                    type: object
+                    required:
+                      - symbolId
+                      - weight
+                    properties:
+                      symbolId:
+                          description: Identificador interno del symbol asociado a la posición.
+                          type: integer
+                          example: 41897
+                      weight:
+                          description: Peso del trade
+                          type: number
+                          example: 0.10600444199511803
+                      shares:
+                          description: Número de participaciones del symbol en la cartera.
+                          type: integer
+                          example: 2550
+                      date:
+                          description: Fecha de la posición en la cartera.
+                          type: string
+                          example: 20170812
+                      type:
+                          description: Tipo de posición. Puede ser en largo o en corto
+                          type: string
+                          example: long
+                      price:
+                          type: number
+                          description: Valor del precio del symbolo
+                          example: 0.23151780664920807
+                      currencyRate:
+                          type: number
+                          description: Precio del cambio de moneda.
+                          example: 1
+                      amount:
+                          type: integer
+                          description: Número de subscripciones del symbol en la cartera.
+                          example: 2000
+    Frequenttrading:
+        type: object
+        required:
+          - in
+          - out
+          - symbolId
+        properties:
+            in:
+                type: integer
+                description: Número de días desde que se incrementó la posición en cartera.
+                example: 154
+            out:
+                type: integer
+                description: Número de días desde que se redujo la posición en cartera.
+                example: 22
+            symbolId:
+                type: integer
+                description: Identificador del símbolo.
+                example: 125436
+    Impacts:
+        type: object
+        required:
+          - symbolId
+          - totalImpact
+          - dailyImpact
+        properties:
+            symbolId:
+                type: integer
+                description:
+                    Identificador del símbolo
+            totalImpact:
+                type: number
+                description: |
+                    El impacto total de ETS sobre un symbol es el porcentaje del patrimonio del symbol que se ha invertido realmente por asesoramiento de ETS.
+
+                    ``impacto total = (sum(peso * (patrimonio cartera + patrimonio clones)) / patrimonio del activo``
+
+                    En caso de que el activo sea fundclass, se tiene en cuenta la inversión de todas las clases del fondo y se divide entre el patrimonio del fondo.
+
+                    Todos los patrimonios se toman en la misma divisa, en este caso, en euros.
+            dailyImpact:
+                type: number
+                description: |
+                    El impacto diario de ETS sobre un symbol es el porcentaje del patrimonio del symbol que se invierte por asesoramiento de ETS en una fecha dada.
+
+                    ``impacto diario = (sum(trade * (patrimonio cartera + patrimonio clones)) / patrimonio del activo``
+
+                    En caso de que el activo sea fundclass, se tiene en cuenta la rotación de todas las clases del fondo y se divide entre el patrimonio del fondo.
+
+                    Todos los patrimonios se toman en la misma divisa, en este caso, en euros.
+    ConfigurationConstraints:
+        type: object
+        required:
+          - frequentTradingControl
+        properties:
+            frequentTradingControl:
+                type: boolean
+                description: PENDIENTE
+                example: True
+            benchmarkSid:
+                type: integer
+                description: PENDIENTE
+                example: PENDIENTE
+            linesNumber:
+                type: integer
+                description: PENDIENTE
+                example: PENDIENTE
+            riskLimAbsolute:
+                type: number
+                description: PENDIENTE
+                example: PENDIENTE
+            riskLimRelative:
+                type: number
+                description: PENDIENTE
+                example: PENDIENTE
+            riskLim:
+                type: number
+                description: PENDIENTE
+                example: PENDIENTE
+    FamilyConstraints:
+        type: object
+        required:
+          - minAssets
+          - maxAssets
+          - minInvestment
+          - maxInvestment
+        properties:
+            minAssets:
+                type: integer
+                description: Patrimonio mínimo
+                example: PENDIENTE
+            maxAssets:
+                type: integer
+                description: Patrimonio máximo
+                example: PENDIENTE
+            minInvestment:
+                type: number
+                description: Inversión mínima
+                example: PENDIENTE
+            maxInvestment:
+                type: number
+                description: Inversión máxima
+                example: PENDIENTE
+    Family:
+        type: object
+        required:
+          - familyId
+          - name
+          - color
+          - constraints
+        properties:
+            familyId:
+                type: integer
+                description: Identificador del tipo de familia
+                example: 8
+            name:
+                type: string
+                description: Nombre de la familia
+            color:
+                type: string
+                description: Color de la familia
+                example: PENDIENTE
+            linkedCategoryId:
+                type: integer
+                description: Identificador de la categoría asociada
+                example: PENDIENTE
+            constraints:
+                $ref: '#/definitions/FamilyConstraints'
+    Group:
+        type: object
+        required:
+          - name
+          - familyType
+          - families
+        properties:
+            name:
+                type: string
+                description: Nombre del grupo de familias
+                example: PENDIENTE
+            familyType:
+                type: integer
+                description: Identificador del tipo de familia
+                example: 4
+            families:
+                type: array
+                items:
+                    $ref: '#/definitions/Family'
+    DecisionConstraint:
+        type: object
+        description: PENDIENTE
+        required:
+          - minLongInvestment
+          - maxLongInvestment
+          - minConditionalWeight
+          - minTurnover
+          - maxTurnover
+          - ousted
+        properties:
+            minLongInvestment:
+                type: number
+                description: PENDIENTE
+                example: PENDIENTE
+            maxLongInvestment:
+                type: number
+                description: PENDIENTE
+                example: PENDIENTE
+            minConditionalWeight:
+                type: number
+                description: PENDIENTE
+                example: PENDIENTE
+            minTurnover:
+                type: number
+                description: PENDIENTE
+                example: PENDIENTE
+            maxTurnover:
+                type: number
+                description: PENDIENTE
+                example: PENDIENTE
+            ousted:
+                type: boolean
+                description: PENDIENTE
+                example: true
+    DecisionAsset:
+        type: object
+        required:
+          - symbolId
+          - constraints
+          - investmentAssetSymbolIds
+          - groupFamilies
+        properties:
+            symbolId:
+                type: integer
+                description: Identificador del símbolo
+                example: PENDIENTE
+            constraints:
+                $ref: '#/definitions/DecisionConstraint'
+            investmentAssetSymbolIds:
+                type: array
+                description: PENDIENTE
+                items:
+                    type: integer
+                    description: Identificador de símbolo
+                    example: 65215
+            groupFamilies:
+                type: array
+                description: Grupo de familias
+                items:
+                    type: integer
+                    description: Identificador de familia
+                    example: 215452
+    Strategy:
+        type: object
+        required:
+          - id
+          - portfolioSId
+        type: object
+        properties:
+            id:
+                type: string
+                description: Identificador de la estrategia
+                example: mt16
+    Portfolio:
+        type: object
+        description: Información de una cartera.
+        required:
+          - id
+          - name
+          - currency
+          - tasteId
+          - isHedged
+        properties:
+            id:
+                type: integer
+                description: Identificador de la cartera.
+                example: 103318
+            name:
+                type: string
+                description: Nombre de la cartera.
+                example: Capital Preservation Conservative. PL NAV
+            currency:
+                type: string
+                description: Identificador de la divisa en *ISO 4217*
+                example: EUR
+            taste:
+                type: string
+                description: Descripción del sabor
+                example: "Pure Machine Live"
+            isHedged:
+                type: boolean
+                description: Si la cartera isHedged
+                example: True
+            rsv:
+                type: string
+                description: Indica el sistema de recomendación que utiliza la cartera None, Old, New
+                example: Old
+            launchAssets:
+                type: number
+                description: PENDIENTE
+                example: 100000000.02550
+            metaportfolioId:
+                type: integer
+                description: Identificador que agrupa los portfolios.
+                example: 218
+            operativeOffset:
+                type: integer
+                description: PENDIENTE
+                example: -1
+            riskLim:
+                type: number
+                description: Límite de riesgo
+                example: 0.15
+    PortfolioRequest:
+        type: object
+        description: Parámetros de creación de la cartera.
+        required:
+          - type
+          - name
+          - shortName
+          - currency
+          - launchAssets
+          - isHedge
+          - strategyId
+          - riskLevel
+          - universeType
+          - referenceIndexSId
+        properties:
+            type:
+                type: string
+                description: Tipo de cartera que se va a crear.
+                example: Labs
+            name:
+                type: string
+                description: Nombre de la cartera.
+                example: Capital Preservation Conservative.
+            shortName:
+                type: string
+                description: Abreviación del nombre de la cartera.
+                example: CapitalPreservation.
+            currency:
+                type: string
+                description: Identificador de la divisa en *ISO 4217*
+                example: EUR
+            launchAssets:
+                type: number
+                description: Patrimonio de partida de la cartera.
+                example: 100000000.02550
+            isHedge:
+                type: boolean
+                description: Si la cartera isHedge
+                example: True
+            strategyId:
+                type: integer
+                description: Identificador de la estrategia utilizada en las recomendaciones de la cartera.
+                example: 1
+            riskLevel:
+                type: string
+                description: Nivel de riesgo de la cartera.
+                example: Medium
+            universeType:
+                type: string
+                description: Tipo de universo utilizado por la cartera.
+                example: FixedIncome
+            referenceIndexSId:
+                type: integer
+                description: Identificador del symbol utilizado como indice de referencia.
+                example: 65789
+            volatility:
+                type: number
+                description: Volatilidad de la cartera.
+                example: 0.5
+            referencePortfolioLabsId:
+                type: integer
+                description: Identificador del portfolio Labs de referencia.
+                example: 12567
+            fees:
+                $ref: '#/definitions/PortfolioFees'
+            recos:
+                type: array
+                items:
+                    $ref: '#/definitions/PortfolioRequestRecommendation'
+            riskLim:
+                type: number
+                description: Límite de riesgo de la cartera.
+                example: 0.05
+    PortfolioEditRequest:
+        type: object
+        description: Parámetros de modificación de la cartera.
+        required:
+          - portfolioId
+        properties:
+            portfolioId:
+                type: integer
+                description: Identificador del portfolio.
+                example: 10871
+            shortName:
+                type: string
+                description: Abreviación del nombre de la cartera.
+                example: CapitalPreservation.
+            launchAssets:
+                type: number
+                description: Patrimonio de partida de la cartera.
+                example: 100000000.02550
+            isHedgeAdviced:
+                type: boolean
+                description: Si la cartera isHedge.
+                example: True
+            strategyId:
+                type: integer
+                description: Identificador de la estrategia utilizada en las recomendaciones de la cartera.
+                example: 1
+            riskLevel:
+                type: string
+                description: Nivel de riesgo de la cartera.
+                example: Medium
+            referenceIndexSId:
+                type: integer
+                description: Identificador del symbol utilizado como indice de referencia.
+                example: 65789
+            referencePortfolioLabsId:
+                type: integer
+                description: Identificador del portfolio Labs de referencia.
+                example: 12567
+            fees:
+                $ref: '#/definitions/PortfolioFees'
+    PortfolioRequestRecommendation:
+        type: object
+        description: Recomendaciones sobre la cartera.
+        required:
+          - date
+          - executionDate
+          - orders
+        properties:
+            date:
+                type: string
+                description: Fecha en formato YYYYMMDD.
+                example: 20171110
+            executionDate:
+                type: string
+                description: Fecha en formato YYYYMMDD.
+                example: 20171112
+            ordes:
+                type: array
+                items:
+                    $ref: '#/definitions/RecommendationOrder'
+    Metaportfolio:
+        type: object
+        description: Información de un metaportfolio.
+        required:
+          - id
+          - name
+          - isPaper
+        properties:
+            id:
+                type: integer
+                description: Identificador del metaportfolio.
+                example: 190
+            name:
+                type: string
+                description: Nombre del metaportoflio.
+                example: BICE Tendencias
+            isPaper:
+                type: boolean
+                description: Indica si es paper
+                example: False
+            simulationSid:
+                type: integer
+                description: Identificador del symbol de la simualción asociada al metaportfolio.
+                example: 89929
+    RecommendationOrder:
+        type: object
+        description: Operaciones recomendadas sobre la cartera.
+        required:
+          - symbolId
+          - recoWeight
+          - recoAmount
+          - recoShares
+          - currentWeight
+          - currentAmount
+          - currentShares
+          - orderWeight
+          - orderAmount
+          - orderShares
+          - orderType
+          - weightInPortfolio
+          - proposedWeight
+        properties:
+            symbolId:
+                type: integer
+                description: Identificador interno del symbol asociado a la posición.
+                example: 100035
+            recoWeight:
+                type: number
+                description: Nuevo peso recomendado para symbol en la cartera. Es el peso elegido por el usuario
+                             (coincide con proposedWeight si el usuario no hace ninguna modificación)
+                example: 0.0240069671
+            recoAmount:
+                type: number
+                description: Nuevo Número de subscripciones del symbol en la cartera.
+                example: 1200348.3541836359
+            recoShares:
+                type: number
+                description: Nuevo Número de participaciones del symbol en la cartera.
+                example: 6852.0855930108
+            currentWeight:
+                type: number
+                description: Peso actual del symbol en la cartera (con respecto al compartimento).
+                example: 0.0309952304
+            currentAmount:
+                type: number
+                description: Número de subscripciones actual del symbol en la cartera.
+                example: 1549761.52
+            currentShares:
+                type: number
+                description: Número de participaciones actual del symbol en la cartera.
+                example: 8846.6806713095
+            orderWeight:
+                type: number
+                description: Peso para el symbol del movimiento recomendado en la cartera (diferencia entre peso
+                             en cartera y peso recomendado).
+                example: 0.0069882633
+            orderAmount:
+                type: number
+                description: Número de subscripciones del symbol asocidos al movimiento de la reco en la cartera.
+                example: 349413.1658163641
+            orderShares:
+                type: number
+                description: Número de participaciones del symbol asocidos al movimiento de la reco en la cartera.
+                example: 1994.5950782987
+            orderType:
+                type: string
+                description: Tipo de order.
+                example: SELL
+            weightInPortfolio:
+                type: number
+                description: Peso actual del symbol en la cartera (con respecto al portfolio).
+                example: 0.0309952304
+            proposedWeight:
+                type: number
+                description: Nuevo peso recomendado para symbol en la cartera. Es el peso decidido por la máquina,
+                             sin intervención del usuario.
+                example: 0.0309952304
+    PortfolioFees:
+        type: object
+        description: Fees de una cartera
+        properties:
+            managementFee:
+                type: number
+                description: La comisión de gestión
+                example: 0.25
+            performanceFee:
+                type: number
+                description: La comisión de éxito, que queda definida mediante un porcentaje
+                example: 0.01
+            performanceFeeMargin:
+                type: number
+                description: Margen a sumar a la comisión de éxito
+                example: 0.1
+            performanceFeeReference:
+                type: integer
+                description: Índice de referencia para aplicar la comisión de éxito
+                example: 25641
+            transactionFee:
+                type: number
+                description: La comisión aplicada a cada una de las operaciones
+                example: 0.012
+    Fee:
+        type: object
+        description: Fees de una cartera
+        required:
+          - managementFee
+          - performanceFee
+          - performanceFeeMargin
+          - performanceFeeReference
+          - transactionFee
+          - isHedged
+        properties:
+            managementFee:
+                type: integer
+                description: La comisión de gestión
+                example: 0.02
+            performanceFee:
+                type: number
+                description: La comisión de éxito, que queda definida mediante un porcentaje
+                example: 0.01
+            performanceFeeMargin:
+                type: number
+                description: Margen a sumar a la comisión de éxito
+                example: 0.1
+            performanceFeeReference:
+                type: integer
+                description: Índice de referencia para aplicar la comisión de éxito
+                example: 214523
+            transactionFee:
+                type: number
+                description: La comisión aplicada a cada una de las operaciones
+                example: 0.012
+            isHedged:
+                type: boolean
+                description: Cartera cubierta o descubierta
+                example: true
+    Pattern:
+        type: object
+        description: Patrón de fechas. Sigue el estándar iCalendar. El patrón está definido en la zona horaria de Madrid.
+        required:
+          - freq
+          - firstDate
+        properties:
+            freq:
+                type: string
+                description: Frecuencia con la que se ejecuta el patrón. Puede ser 'daily' o 'weekly'
+                example: "daily"
+            interval:
+                type: string
+                description: Intervalo entre cada iteración de la frecuencia. Por ejemplo, si tiene frecuencia semanal y su valor es 2, se ejecutará cada 2 semanas. Por defecto es 1.
+                example: 1
+            firstDate:
+                type: string
+                description: Fecha a partir de la cual se genera el patrón.
+                example: "20170102"
+            byweekday:
+                type: array
+                description: Entero o lista de enteros que representan a los días de la semana de Lunes a Viernes comenzando por 0 (Lunes=0, Martes=1,...)
+                items:
+                    type: integer
+                    example: [0,2,4]
+    OperativeOffset:
+        type: object
+        description: Offset operativo. Es un entero que indica el desplazamiento en número de días entre la fecha de la recomendación y la fecha de ejecución de sus órdenes
+        required:
+          - operativeOffset
+        properties:
+            operativeOffset:
+                type: integer
+                description: Desplazamiento en número de días entre la fecha de la recomendación y la fecha de ejecución de sus órdenes
+                example: 1

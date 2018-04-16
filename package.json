@@ -7,9 +7,9 @@
     "spectacle": "bin/spectacle.js"
   },
   "scripts": {
-    "build": "spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/cheese.json",
-    "test": "node bin/spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/cheese.json",
-    "develop": "node bin/spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/cheese.json -d",
+    "build": "spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/pm.yaml",
+    "test": "node bin/spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/pm.yaml",
+    "develop": "node bin/spectacle -F test/fixtures/favicon.ico -l test/fixtures/cheese.png test/fixtures/pm.yaml -d",
     "start": "spectacle -s"
   },
   "repository": {
