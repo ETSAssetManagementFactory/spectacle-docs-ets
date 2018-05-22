@@ -31,7 +31,7 @@ See a demo of Spectacle in action here: [http://cheesestore.github.io](http://ch
 Simply install Spectacle from `npm` like so:
 
 ```bash
-npm install -g spectacle-docs-ets
+npm install -g spectacle-docs-etsfactory
 ```
 
 Next pass your `swagger.json` document use the CLI to generate your documentation.
